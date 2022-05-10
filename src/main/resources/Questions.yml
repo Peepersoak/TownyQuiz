@@ -1,0 +1,48 @@
+land_claiming: #categoryName, used for commands
+  TitleName: "Land Claiming" #categoryTitle, used for messages
+  Permission: true #Requires "quiz.category.<categoryName>" if true
+  MinimumScore: 1.0 #0 - 1, Correct Answers/Number of Question - Players will complete the quiz and receive rewards when score is above minimum score.
+  RequiredCategory: [] #Pre-requisite category before allowing to take this quiz.
+  Questions:
+    1:
+      Question: "What is the command used to claim a land?"
+      Choices: #Choices are randomized each time a player takes a quiz.
+        - "/land delete <landName>"
+        - "/land create <landName>"
+        - "/land trust <landName>"
+        - "/land claim;*" #";*" at the end of choice means that is the correct answer. This can be any symbol that the dev prefers. Just to identify which of the choices are correct.
+    # For multiple choices; players must select all correct choices to get a score from the question.
+    2:
+      Question: "Which of the choices are command alias for land claiming? Select 2 choices."
+      Choices:
+        - "/land;*"
+        - "/claim"
+        - "/lc"
+        - "/town;*"
+  Rewards:
+    OnStart: []
+    OnCompleted:
+      - "console: give %player% diamond 1"
+      - "message: &6You have completed &4{categoryTitle} &6with a score of &a{score} &6of &c{total}&6!"
+    OnFailed: []
+
+chest_protection:
+  TitleName: "Chest Protection"
+  Permission: true
+  MinimumScore: 1.0
+  RequiredCategory:
+    - land_claiming
+  Questions:
+    1:
+      Question: "What is the command used to protect your chests?"
+      Choices:
+        - "/cprivate;*"
+        - "/protect"
+        - "/chest"
+        - "/chestprotect"
+  Rewards:
+    OnStart: []
+    OnCompleted:
+      - "console: give %player% diamond 1"
+      - "message: &6You have completed &4{categoryTitle} &6with a score of &a{score} &6of &c{total}&6!"
+    OnFailed: []

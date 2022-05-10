@@ -1,0 +1,10 @@
+name: TownyQuiz
+version: ${project.version}
+main: com.peepersoak.townyquiz.TownyQuiz
+api-version: 1.18
+commands:
+  quiz:
+    description: "Main command for quiz"
+    aliases:
+      - qz
+  perm:
