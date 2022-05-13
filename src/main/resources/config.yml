@@ -1,2 +1,14 @@
 Remind_Player: true # If the player has an existing quiz, a reminder will be sent to them every X minute
 Remind_Interval: 3 # In minutes;
+
+soundOnCorrectAnswer: "BLOCK_NOTE_BLOCK_CHIME"
+soundOnWrongAnswer: "BLOCK_NOTE_BLOCK_DIDGERIDOO"
+soundOnCompleted: "ENTITY_PLAYER_LEVELUP"
+
+Chat_Question_Format:
+  - "▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃" # Header
+  - "&6{question}" # The question
+  - "" # Space
+  - "&e- {choices}" # The choice prefix, choices will be in 4 lines
+  - "" # Space
+  - "▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃" # Footer

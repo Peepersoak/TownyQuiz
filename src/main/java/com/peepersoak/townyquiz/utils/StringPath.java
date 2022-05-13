@@ -28,7 +28,12 @@ public class StringPath {
     public static String MESSAGE_NO_QUIZ = "noQuiz";
     public static String MESSAGE_REMINDER = "Reminder_Message";
     public static String MESSAGE_CANCEL_QUIZ = "onCancelQuiz";
+    public static String MESSAGE_ON_NEXT_QUESTION = "onNextQuestion";
 
     public static String CONFIG_SHOULD_REMIND = "Remind_Player";
     public static String CONFIG_REMIND_INTERVAL = "Remind_Interval";
+    public static String CONFIG_SOUND_ON_CORRECT_ANSWER = "soundOnCorrectAnswer";
+    public static String CONFIG_SOUND_ON_WRONG_ANSWER = "soundOnWrongAnswer";
+    public static String CONFIG_SOUND_ON_QUIZ_COMPLETE = "soundOnCompleted";
+    public static String CONFIG_QUESTION_FORMAT = "Chat_Question_Format";
 }

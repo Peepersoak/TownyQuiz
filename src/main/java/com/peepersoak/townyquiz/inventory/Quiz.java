@@ -7,6 +7,8 @@ import com.peepersoak.townyquiz.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.geysermc.geyser.GeyserImpl;
+import org.geysermc.geyser.session.GeyserSession;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,11 +63,12 @@ public class Quiz {
 
             player.closeInventory();
             TownyQuiz.getInstance().removePlayer(uuid);
+            Utils.playSound(player, TownyQuiz.getInstance().getConfig().getString(StringPath.CONFIG_SOUND_ON_QUIZ_COMPLETE));
             return;
         }
 
         openQuestionGUI(player, data, nextQuestion);
-        Utils.sendSyncMessage(player, "&eNext Question... &6or enter &2/quiz cancel &6to cancel and exit the current quiz");
+        Utils.sendSyncMessage(player, TownyQuiz.getInstance().getMessageData().getConfig().getString(StringPath.MESSAGE_ON_NEXT_QUESTION));
     }
 
     public void openQuestionGUI(Player player, QuestionsData data, int questionNumber) {
@@ -74,6 +77,30 @@ public class Quiz {
         List<String> answer = data.getAnswer(question);
 
         Collections.shuffle(choices);
+
+        GeyserSession session = GeyserImpl.getInstance().connectionByUuid(player.getUniqueId());
+
+        if (session != null) {
+            TownyQuiz.getInstance().getIsjavaPlayer().put(player.getUniqueId(), false);
+
+            List<String> format = TownyQuiz.getInstance().getConfig().getStringList(StringPath.CONFIG_QUESTION_FORMAT);
+            for (String form : format) {
+                if (form.contains("{question}")) {
+                    Utils.sendSyncMessage(player, form.replace("{question}", question));
+                }
+                else if (form.contains("{choices}")) {
+                    for (String choice : choices) {
+                        Utils.sendSyncMessage(player, form.replace("{choices}", choice));
+                    }
+                }
+                else {
+                    Utils.sendSyncMessage(player, form);
+                }
+            }
+            return;
+        }
+
+        TownyQuiz.getInstance().getIsjavaPlayer().put(player.getUniqueId(), true);
 
         Inventory inv = Utils.createInventory(StringPath.TOWNY_QUIZ_GUI_NAME, 18);
 

@@ -4,6 +4,7 @@ import com.peepersoak.townyquiz.TownyQuiz;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -52,5 +53,17 @@ public class Utils {
             str.add(color("&e" + sting));
         }
         return str;
+    }
+
+    public static void playSound(Player player, String sound) {
+        if (sound == null) return;
+        Sound s;
+        try {
+            s = Sound.valueOf(sound);
+        } catch (IllegalArgumentException exception) {
+            TownyQuiz.getInstance().getLogger().warning(sound + " does not exist!");
+            return;
+        }
+        player.playSound(player.getLocation(), s, 5.0F, 1.0F);
     }
 }

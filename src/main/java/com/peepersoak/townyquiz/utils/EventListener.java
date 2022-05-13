@@ -8,6 +8,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -56,6 +58,9 @@ public class EventListener implements Listener {
         if (maxChoice == 1) {
             if (meta.hasItemFlag(ItemFlag.HIDE_UNBREAKABLE)) {
                 TownyQuiz.getInstance().addScore(uuid);
+                Utils.playSound(player, TownyQuiz.getInstance().getConfig().getString(StringPath.CONFIG_SOUND_ON_CORRECT_ANSWER));
+            } else {
+                Utils.playSound(player, TownyQuiz.getInstance().getConfig().getString(StringPath.CONFIG_SOUND_ON_WRONG_ANSWER));
             }
             TownyQuiz.getInstance().nextQuestion(uuid);
             TownyQuiz.getInstance().getQuiz().nextQuestion(player);
@@ -73,9 +78,12 @@ public class EventListener implements Listener {
                 inv.setItem(slot, Utils.createButton(" ", null, Material.BLACK_STAINED_GLASS_PANE, false, false));
             }
 
-            if (maxChoice == playerAnswer.get(uuid).size()) {
+            if (playerAnswer.get(uuid).size() >= maxChoice) {
                 if (!playerAnswer.get(uuid).contains(false)) {
                     TownyQuiz.getInstance().addScore(uuid);
+                    Utils.playSound(player, TownyQuiz.getInstance().getConfig().getString(StringPath.CONFIG_SOUND_ON_CORRECT_ANSWER));
+                } else {
+                    Utils.playSound(player, TownyQuiz.getInstance().getConfig().getString(StringPath.CONFIG_SOUND_ON_WRONG_ANSWER));
                 }
                 TownyQuiz.getInstance().nextQuestion(uuid);
                 TownyQuiz.getInstance().getQuiz().nextQuestion(player);
@@ -84,5 +92,59 @@ public class EventListener implements Listener {
                 Utils.sendSyncMessage(player, "&bChoose your next answer");
             }
         }
+    }
+
+    @EventHandler
+    public void onChat(AsyncPlayerChatEvent e) {
+        Player player = e.getPlayer();
+        String message = e.getMessage().trim();
+        checkBedrockAnswer(player, message);
+    }
+
+    @EventHandler
+    public void onCommand(PlayerCommandPreprocessEvent e) {
+        Player player = e.getPlayer();
+        String message = e.getMessage();
+        if (checkBedrockAnswer(player, message)) {
+            e.setCancelled(true);
+        }
+    }
+
+    private boolean checkBedrockAnswer(Player player, String message) {
+        UUID uuid = player.getUniqueId();
+
+        if (TownyQuiz.getInstance().isTakingQuiz(uuid)) {
+            String category = TownyQuiz.getInstance().getCatergory(uuid);
+            QuestionsData data = TownyQuiz.getInstance().getQuestions().getQuestionList().get(category);
+            String question = data.getAllQuestion().get(TownyQuiz.getInstance().getCurrentQuestion(uuid));
+            List<String> answer = data.getAnswer(question);
+            int maxChoice = data.getMaxChoice(question);
+
+            List<Boolean> ans;
+            if (playerAnswer.containsKey(uuid)) {
+                ans = playerAnswer.get(uuid);
+            } else {
+                ans = new ArrayList<>();
+            }
+            ans.add(answer.contains(message));
+            playerAnswer.put(uuid, ans);
+
+            if (playerAnswer.get(uuid).size() >= maxChoice) {
+                if (!ans.contains(false)) {
+                    TownyQuiz.getInstance().addScore(uuid);
+                    Utils.playSound(player, TownyQuiz.getInstance().getConfig().getString(StringPath.CONFIG_SOUND_ON_CORRECT_ANSWER));
+                } else {
+                    Utils.playSound(player, TownyQuiz.getInstance().getConfig().getString(StringPath.CONFIG_SOUND_ON_WRONG_ANSWER));
+                }
+                TownyQuiz.getInstance().nextQuestion(uuid);
+                TownyQuiz.getInstance().getQuiz().nextQuestion(player);
+                playerAnswer.remove(uuid);
+            } else {
+                Utils.sendSyncMessage(player, "&bChoose your next answer");
+            }
+
+            return true;
+        }
+        return false;
     }
 }

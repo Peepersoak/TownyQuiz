@@ -18,6 +18,8 @@ public final class TownyQuiz extends JavaPlugin {
     private final HashMap<UUID, String> playerCurrentCategory = new HashMap<>();
     private final HashMap<UUID, Integer> playerCurrentQuestion = new HashMap<>();
     private final HashMap<UUID, Integer> playerQuizScore = new HashMap<>();
+    private final HashMap<UUID, Boolean> isjavaPlayer = new HashMap<>();
+
     private final Quiz quiz = new Quiz();
     private final Reminder reminder = new Reminder();
 
@@ -72,6 +74,7 @@ public final class TownyQuiz extends JavaPlugin {
         playerCurrentCategory.remove(uuid);
         playerQuizScore.remove(uuid);
         playerCurrentQuestion.remove(uuid);
+        isjavaPlayer.remove(uuid);
     }
 
     public void addScore(UUID uuid) {
@@ -122,5 +125,9 @@ public final class TownyQuiz extends JavaPlugin {
 
     public Quiz getQuiz() {
         return quiz;
+    }
+
+    public HashMap<UUID, Boolean> getIsjavaPlayer() {
+        return isjavaPlayer;
     }
 }
