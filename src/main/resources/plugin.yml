@@ -7,3 +7,5 @@ commands:
     description: "Main command for quiz"
     aliases:
       - qz
+softdepend:
+  - Geyser-Spigot

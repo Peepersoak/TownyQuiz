@@ -14,6 +14,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +24,44 @@ import java.util.UUID;
 public class EventListener implements Listener {
 
     private final HashMap<UUID, List<Boolean>> playerAnswer = new HashMap<>();
+
+    @EventHandler
+    public void onClickCancel(InventoryClickEvent e) {
+        if (e.getClickedInventory() == null) return;
+        if (e.getView().getTitle().equalsIgnoreCase(StringPath.TOWNY_QUIZ_GUI_CATEGORY_NAME)) {
+            e.setCancelled(true);
+
+            Player player = (Player) e.getWhoClicked();
+            ItemStack itemStack = e.getClickedInventory().getItem(e.getSlot());
+            if (itemStack == null) return;
+            ItemMeta meta = itemStack.getItemMeta();
+            if (meta == null) return;
+            String status = meta.getPersistentDataContainer().get(StringPath.QUIZ_CATEGORY_STATUS, PersistentDataType.STRING);
+            String category = meta.getPersistentDataContainer().get(StringPath.QUIZ_CATEGORY, PersistentDataType.STRING);
+            if (status == null) return;
+            if (category == null) return;
+
+            if (status.equalsIgnoreCase(QuizStatus.AVAILABLE)) {
+                Utils.startQuiz(player, category);
+            }
+            else if (status.equalsIgnoreCase(QuizStatus.COMPLETE)) {
+                Utils.sendSyncMessage(player, TownyQuiz.getInstance().getMessageData().getConfig().getString(StringPath.MESSAGE_QUIZ_STATUS_COMPLETE));
+            }
+            else if (status.equalsIgnoreCase(QuizStatus.NO_PERMISSION)) {
+                Utils.sendSyncMessage(player, TownyQuiz.getInstance().getMessageData().getConfig().getString(StringPath.MESSAGE_QUIZ_STATUS_NO_PERMISSION));
+            }
+            else if (status.equalsIgnoreCase(QuizStatus.PRE_REQUISITE)) {
+                QuestionsData data = TownyQuiz.getInstance().getQuestions().getQuestionList().get(category);
+                for (String perm : data.getPreRequisiteCategory()) {
+                    if (!player.hasPermission("quiz.category." + perm)) {
+                        Utils.sendSyncMessage(player, TownyQuiz.getInstance().getMessageData().getConfig().getString(StringPath.MESSAGE_QUIZ_STATUS_REQ_NOT_MET));
+                        return;
+                    }
+                }
+                Utils.startQuiz(player, category);
+            }
+        }
+    }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
@@ -98,15 +137,19 @@ public class EventListener implements Listener {
     public void onChat(AsyncPlayerChatEvent e) {
         Player player = e.getPlayer();
         String message = e.getMessage().trim();
-        checkBedrockAnswer(player, message);
+        if (TownyQuiz.getInstance().getIsjavaPlayer().containsKey(player.getUniqueId())) {
+            checkBedrockAnswer(player, message);
+        }
     }
 
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent e) {
         Player player = e.getPlayer();
         String message = e.getMessage();
-        if (checkBedrockAnswer(player, message)) {
-            e.setCancelled(true);
+        if (TownyQuiz.getInstance().getIsjavaPlayer().containsKey(player.getUniqueId())) {
+            if (checkBedrockAnswer(player, message)) {
+                e.setCancelled(true);
+            }
         }
     }
 

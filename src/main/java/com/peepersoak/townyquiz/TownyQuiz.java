@@ -20,11 +20,12 @@ public final class TownyQuiz extends JavaPlugin {
     private final HashMap<UUID, Integer> playerQuizScore = new HashMap<>();
     private final HashMap<UUID, Boolean> isjavaPlayer = new HashMap<>();
 
+    private final List<String> quizCategories = new ArrayList<>();
+
     private final Quiz quiz = new Quiz();
     private final Reminder reminder = new Reminder();
 
     private static TownyQuiz instance;
-    private Data questionData;
     private Data messageData;
     private Questions questions;
 
@@ -35,7 +36,6 @@ public final class TownyQuiz extends JavaPlugin {
         saveDefaultConfig();
 
         reloadDataYML();
-        questions = new Questions(questionData);
 
         Bukkit.getPluginManager().registerEvents(new EventListener(), instance);
 
@@ -62,8 +62,11 @@ public final class TownyQuiz extends JavaPlugin {
     }
 
     public void reloadDataYML() {
-        questionData = new Data(StringPath.QUESTION_YML);
+        Data questionData = new Data(StringPath.QUESTION_YML);
         messageData = new Data(StringPath.MESSAGE_DATA_YML);
+
+        questions = new Questions(questionData);
+        quizCategories.addAll(questions.getQuestionList().keySet());
     }
 
     public void addReplacePlayerCategory(UUID uuid, String category) {
@@ -129,5 +132,9 @@ public final class TownyQuiz extends JavaPlugin {
 
     public HashMap<UUID, Boolean> getIsjavaPlayer() {
         return isjavaPlayer;
+    }
+
+    public List<String> getQuizCategories() {
+        return quizCategories;
     }
 }

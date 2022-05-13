@@ -1,6 +1,7 @@
 package com.peepersoak.townyquiz.commands;
 
 import com.peepersoak.townyquiz.TownyQuiz;
+import com.peepersoak.townyquiz.inventory.QuizCategory;
 import com.peepersoak.townyquiz.questionsdata.QuestionsData;
 import com.peepersoak.townyquiz.utils.StringPath;
 import com.peepersoak.townyquiz.utils.Utils;
@@ -41,6 +42,7 @@ public class QuizCommand implements CommandExecutor {
 
                 if (cmd.equalsIgnoreCase("take")) {
                     String category = args[1];
+
                     if (player.hasPermission("quiz.command.take") || player.hasPermission("quiz.admin.take")) {
                         takeQuiz(player, category, false);
                     } else {
@@ -99,6 +101,10 @@ public class QuizCommand implements CommandExecutor {
                     Utils.sendSyncMessage(player, "&cPlase enter the category");
                 }
             }
+            else if (args.length == 0) {
+                QuizCategory category = new QuizCategory();
+                category.openCategory(player);
+            }
         } else {
             // Will run by console
             if (args.length == 3) {
@@ -113,7 +119,7 @@ public class QuizCommand implements CommandExecutor {
                 }
 
                 if (cmd.equalsIgnoreCase("take")) {
-                    startQuiz(player, category);
+                    Utils.startQuiz(player, category);
                 }
             }
             else if (args.length == 2) {
@@ -138,7 +144,7 @@ public class QuizCommand implements CommandExecutor {
 
     private void takeQuiz(Player player, String category, boolean ignorePerms) {
         if (ignorePerms) {
-            startQuiz(player, category);
+            Utils.startQuiz(player, category);
             return;
         }
         if (TownyQuiz.getInstance().getQuestions().getQuestionList().get(category).checkPermission()) {
@@ -147,9 +153,13 @@ public class QuizCommand implements CommandExecutor {
                 return;
             }
         }
+        if (player.hasPermission("quiz.category.complete." + category)) {
+            Utils.sendSyncMessage(player, TownyQuiz.getInstance().getMessageData().getConfig().getString(StringPath.MESSAGE_QUIZ_STATUS_COMPLETE));
+            return;
+        }
         List<String> requiredCategory = TownyQuiz.getInstance().getQuestions().getQuestionList().get(category).getPreRequisiteCategory();
         for (String reqCategory : requiredCategory) {
-            if (!player.hasPermission("quiz.category." + reqCategory) && !player.hasPermission("quiz.bypass." + reqCategory) && !player.hasPermission("quiz.bypass.*")) {
+            if (!player.hasPermission("quiz.category.complete." + reqCategory) && !player.hasPermission("quiz.bypass." + reqCategory) && !player.hasPermission("quiz.bypass.*")) {
                 String msg = TownyQuiz.getInstance().getMessageData().getConfig().getString(StringPath.MESSAGE_NO_PRE_REQUISITE_CATEGORY);
                 if (msg == null) continue;
                 String updated = msg.replace("{requiredCategoryTitle}", reqCategory.replace("_", " "));
@@ -157,18 +167,7 @@ public class QuizCommand implements CommandExecutor {
                 return;
             }
         }
-        startQuiz(player, category);
+        Utils.startQuiz(player, category);
         Utils.sendSyncMessage(player, TownyQuiz.getInstance().getMessageData().getConfig().getString(StringPath.MESSAGE_ON_START));
-    }
-
-    private void startQuiz(Player player, String category) {
-        TownyQuiz.getInstance().getQuiz().startQuiz(category, player);
-        UUID uuid = player.getUniqueId();
-
-        TownyQuiz.getInstance().removePlayer(uuid);
-
-        TownyQuiz.getInstance().addReplacePlayerCategory(uuid, category);
-        TownyQuiz.getInstance().addPlayerToScoreData(uuid);
-        TownyQuiz.getInstance().addQuestionNumber(uuid);
     }
 }

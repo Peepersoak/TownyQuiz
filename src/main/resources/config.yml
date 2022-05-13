@@ -12,3 +12,33 @@ Chat_Question_Format:
   - "&e- {choices}" # The choice prefix, choices will be in 4 lines
   - "" # Space
   - "▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃" # Footer
+
+notTaken:
+  Title: "&6{categoryTitle}"
+  Item: "BOOK"
+  Lore:
+    - "&eStatus: Available"
+    - "&eNumber of Questions: {total}"
+    - "&eMinimum Passing Score: {passing}"
+Completed:
+  Title: "&6{categoryTitle}"
+  Item: "LIME_CONCRETE"
+  Lore:
+    - "&eStatus: Completed"
+    - "&eNumber of Questions: {total}"
+    - "&eMinimum Passing Score: {passing}"
+prequisiteRequired:
+  Title: "&6{categoryTitle}"
+  Item: "RED_CONCRETE"
+  Lore:
+    - "&eStatus: Unavailable"
+    - "&eNumber of Questions: {total}"
+    - "&eMinimum Passing Score: {passing}"
+    - ""
+    - "&eRequirement to access"
+    - "&d{requiredCategoryTitle}"
+noPermission:
+  Title: "&6{categoryTitle}"
+  Item: "BARRIER"
+  Lore:
+    - "&eProgress /journals to access this!"

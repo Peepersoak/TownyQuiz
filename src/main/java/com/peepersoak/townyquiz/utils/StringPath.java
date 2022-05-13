@@ -1,5 +1,8 @@
 package com.peepersoak.townyquiz.utils;
 
+import com.peepersoak.townyquiz.TownyQuiz;
+import org.bukkit.NamespacedKey;
+
 public class StringPath {
 
     public static String QUESTION_YML = "Questions.yml";
@@ -18,6 +21,7 @@ public class StringPath {
     public static String QUESTION_REWARD_ON_FAILED = "OnFailed";
 
     public static String TOWNY_QUIZ_GUI_NAME = "Towny Quiz";
+    public static String TOWNY_QUIZ_GUI_CATEGORY_NAME ="Quiz Categories";
 
     public static String MESSAGE_NO_PRE_REQUISITE_CATEGORY = "noPrerequisiteCategory";
     public static String MESSAGE_NO_PERMISSION = "noPermission";
@@ -29,6 +33,9 @@ public class StringPath {
     public static String MESSAGE_REMINDER = "Reminder_Message";
     public static String MESSAGE_CANCEL_QUIZ = "onCancelQuiz";
     public static String MESSAGE_ON_NEXT_QUESTION = "onNextQuestion";
+    public static String MESSAGE_QUIZ_STATUS_COMPLETE = "quizStatusComplete";
+    public static String MESSAGE_QUIZ_STATUS_NO_PERMISSION = "quizStatusNoPermission";
+    public static String MESSAGE_QUIZ_STATUS_REQ_NOT_MET = "quizStatusPreReqNotMet";
 
     public static String CONFIG_SHOULD_REMIND = "Remind_Player";
     public static String CONFIG_REMIND_INTERVAL = "Remind_Interval";
@@ -36,4 +43,16 @@ public class StringPath {
     public static String CONFIG_SOUND_ON_WRONG_ANSWER = "soundOnWrongAnswer";
     public static String CONFIG_SOUND_ON_QUIZ_COMPLETE = "soundOnCompleted";
     public static String CONFIG_QUESTION_FORMAT = "Chat_Question_Format";
+
+    public static String CONFIG_QUIZ_NOT_TAKEN_SETTING = "notTaken";
+    public static String CONFIG_QUIZ_COMPLETED_SETTING = "Completed";
+    public static String CONFIG_QUIZ_PRE_REQUISITE_SETTING = "prequisiteRequired";
+    public static String CONFIG_QUIZ_NO_PERMISSION_SETTING = "noPermission";
+
+    public static String CONFIG_QUIZ_CATEGORY_TITLE = "Title";
+    public static String CONFIG_QUIZ_CATEGORY_ITEM = "Item";
+    public static String CONFIG_QUIZ_CATEGORY_LORES = "Lore";
+
+    public static NamespacedKey QUIZ_CATEGORY = new NamespacedKey(TownyQuiz.getInstance(), "QuizCategory");
+    public static NamespacedKey QUIZ_CATEGORY_STATUS = new NamespacedKey(TownyQuiz.getInstance(), "QuizCategoryStatus");
 }

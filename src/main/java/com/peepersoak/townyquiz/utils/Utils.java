@@ -14,6 +14,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Utils {
 
@@ -50,7 +51,7 @@ public class Utils {
         if (list == null) return null;
         List<String> str = new ArrayList<>();
         for (String sting : list) {
-            str.add(color("&e" + sting));
+            str.add(color(sting));
         }
         return str;
     }
@@ -65,5 +66,16 @@ public class Utils {
             return;
         }
         player.playSound(player.getLocation(), s, 5.0F, 1.0F);
+    }
+
+    public static void startQuiz(Player player, String category) {
+        TownyQuiz.getInstance().getQuiz().startQuiz(category, player);
+        UUID uuid = player.getUniqueId();
+
+        TownyQuiz.getInstance().removePlayer(uuid);
+
+        TownyQuiz.getInstance().addReplacePlayerCategory(uuid, category);
+        TownyQuiz.getInstance().addPlayerToScoreData(uuid);
+        TownyQuiz.getInstance().addQuestionNumber(uuid);
     }
 }
