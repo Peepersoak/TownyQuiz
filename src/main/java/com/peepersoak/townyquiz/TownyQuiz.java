@@ -20,7 +20,7 @@ public final class TownyQuiz extends JavaPlugin {
     private final HashMap<UUID, Integer> playerQuizScore = new HashMap<>();
     private final HashMap<UUID, Boolean> isjavaPlayer = new HashMap<>();
 
-    private final List<String> quizCategories = new ArrayList<>();
+    private List<String> quizCategories;
 
     private final Quiz quiz = new Quiz();
     private final Reminder reminder = new Reminder();
@@ -66,7 +66,9 @@ public final class TownyQuiz extends JavaPlugin {
         messageData = new Data(StringPath.MESSAGE_DATA_YML);
 
         questions = new Questions(questionData);
-        quizCategories.addAll(questions.getQuestionList().keySet());
+        quizCategories = new ArrayList<>(questions.getQuestionList().keySet());
+
+        reloadConfig();
     }
 
     public void addReplacePlayerCategory(UUID uuid, String category) {
